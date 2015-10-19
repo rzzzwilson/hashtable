@@ -23,12 +23,12 @@ Before using a hashtable you must create it:
     HASHTABLE h = HashCreate(64, hash, compare);
 
 You supply the size of the hashtable vector (64 elements in this case)
-as well as the to user-supplied functions, **hash()** and
+as well as the two user-supplied functions, **hash()** and
 **compare()**.  You have to do this as the hashtable code knows
 nothing about your records as they are passed in as **void**
 pointers.
 
-The auxiliary functions have the following signatures:
+The compare function has the following signature:
 
 ::
 
@@ -48,7 +48,7 @@ and somehow compare them.  The return value is one of:
 |   +1    | new > old  |
 +---------+------------+
 
-The hash function is:
+The hash function signature is:
 
 ::
 
@@ -67,8 +67,24 @@ Once the hashtable has been created you can populate it so:
         int  count;
     } MYREC;
 
-    MYREC     myrec;
+    MYREC myrec;
 
     void *rec = HashLookup(h, &myrec);
+
+To find a record in a hashtable do something like this:
+
+::
+
+    HASHTABLE h = HashCreate(64, hash, compare);
+
+    /* insert some records here */
+
+    char *record = "abc";
+    void *result = HashLookup(h, (void *) record):
+
+    if (result == NULL)
+        /* not found */
+    else
+        /* found */
 
 Look in **test.c** for some sample code.

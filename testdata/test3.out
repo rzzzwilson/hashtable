@@ -1,0 +1,13 @@
+Inserted new record 'abc'
+Inserted new record 'rst'
+Inserted new record 'xyz'
+Inserted new record 'lmn'
+Found old record 'abc', count=2
+Found old record 'rst', count=2
+Found old record 'abc', count=3
+Inserted new record '123'
+Record: '123', count=1
+Record: 'xyz', count=1
+Record: 'lmn', count=1
+Record: 'rst', count=2
+Record: 'abc', count=3

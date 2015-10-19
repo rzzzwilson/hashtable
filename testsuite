@@ -1,0 +1,241 @@
+#!/bin/bash
+################################################################################
+# This program is used to do regression testing on the hashtable library.
+#
+# If the test is OK, the program will print the following 3 lines on stdout:
+#	--------------------
+#	Test OK!
+#	--------------------
+#
+# and terminate with an exit value of 0.
+#
+# Anything else (including nothing printed) means there was an error.
+################################################################################
+
+######
+# IF using MEMCHECK code in 'test', uncomment the following line.
+######
+
+#MEMCHECK=.MEMCHECK
+
+######
+# Define the testing function.
+#
+# Usage: testit <suitename>
+#
+# where <suitename> is the name of the suite (for reporting)
+#
+######
+
+testit()
+{
+    if [ $# -ne 1 ]; then
+        echo "testit: usage <suitename>"
+        echo "Got args '$*'"
+        exit 1
+    fi
+
+######
+# Make up the test filenames.
+######
+
+    SUITENAME=$1
+
+    INFILE=$TESTDIR/$SUITENAME.in
+
+    XERROR="N"
+
+    if [ ! -r $INFILE ]; then
+        echo "No input file $INFILE?"
+        XERROR="Y"
+    fi
+
+    if [ "$XERROR" != "N" ]; then
+        return 1
+    fi
+
+    echo -n "Testing $SUITENAME ... "
+
+    cd $TMPDIR
+
+######
+# Create the output filenames.
+######
+
+    OUTERR=$SUITENAME.err$MEMCHECK
+    OUTFILE=$SUITENAME.out$MEMCHECK
+
+######
+# See that we have all the sample files required.
+######
+
+    XERROR="N"
+
+    if [ ! -r $TESTDIR/$OUTERR ]; then
+        echo "\nCan't find sample file '$TESTDIR/$OUTERR'"
+        XERROR="Y"
+    fi
+ 
+    if [ ! -r $TESTDIR/$OUTFILE ]; then
+        if [ "$XERROR" == "N" ]; then
+            echo "\nCan't find sample file '$TESTDIR/$OUTFILE'"
+        else
+            echo "Can't find sample file '$TESTDIR/$OUTFILE'"
+        fi
+        XERROR="Y"
+    fi
+ 
+    if [ "$XERROR" != "N" ]; then
+        return 1
+    fi
+
+######
+# Run the test.
+######
+
+    $HERE/test $INFILE $OUTFILE >$OUTERR 2>&1
+    RUNSTATUS=$?
+    if [ $RUNSTATUS -ne 0 ]; then
+        echo "$HERE/test failed: exit status $RUNSTATUS"
+        exit
+    fi
+
+######
+# Check the stdout/stderr files.
+######
+
+    XERROR="N"
+
+    diff $TESTDIR/$OUTERR $OUTERR >/dev/null 2>&1
+    RES=$?
+    if [ $RES -ne 0 ]; then
+        echo "${BOLD}Incorrect stdout/stderr output from $SUITENAME dataset.${NORMAL}"
+        echo "$TESTDIR/$OUTERR =========================="
+        cat $TESTDIR/$OUTERR
+        echo "==========================================="
+        echo "$OUTERR ==================================="
+        cat $OUTERR
+        echo "==========================================="
+        XERROR="Y"
+    fi
+
+
+    diff $TESTDIR/$OUTFILE $OUTFILE >/dev/null 2>&1
+    RES=$?
+    if [ $RES -ne 0 ]; then
+        echo "${BOLD}Incorrect normal output from $SUITENAME dataset.${NORMAL}"
+        echo "$TESTDIR/$OUTFILE =========================="
+        cat $TESTDIR/$OUTFILE
+        echo "==========================================="
+        echo "$OUTFILE ==================================="
+        cat $OUTFILE
+        echo "==========================================="
+        XERROR="Y"
+    fi
+
+######
+# Check for errors and abort if any.
+######
+
+    if [ "$XERROR" != "N" ]; then
+        return 1
+    fi
+
+    echo "OK!"
+    return 0
+}
+
+################################################################################
+# Set all the things that might change.
+################################################################################
+
+PROGNAME="$(basename $0)"
+HERE=$(pwd)
+
+TESTDIR=$HERE/testdata
+EXIT_OK=0
+EXIT_ERROR=1
+
+TMPDIR=/var/tmp/$PROGNAME.$$
+trap "cd $HERE; rm -Rf $TMPDIR" 0
+mkdir $TMPDIR
+
+######
+# Set flag to NO ERROR.
+######
+
+ERROR=0
+
+######
+# Check that we have the library and executable to test.
+######
+
+if [ ! -r hashtable.o ]; then
+    echo "Can't find 'hashtable.o' - please do a make"
+    ERROR=1
+fi
+
+if [ ! -x test ]; then
+    echo "Can't find 'test' - please do a make"
+    ERROR=1
+fi
+
+if [ $ERROR -ne 0 ]; then
+    return EXIT_ERROR
+fi
+
+######
+# Do a small test first - no data
+######
+
+testit test1
+RES=$?
+if [ $RES -ne 0 ]; then
+    ERROR=1
+fi
+
+######
+# Do a small test - one line of data
+######
+
+testit test2
+RES=$?
+if [ $RES -ne 0 ]; then
+    ERROR=1
+fi
+
+######
+# Do a larger test - lots of lines of data, some duplicates
+######
+
+testit test3
+RES=$?
+if [ $RES -ne 0 ]; then
+    ERROR=1
+fi
+
+######
+# Do a larger test - lots of lines of data, lotsa duplicates
+######
+
+testit test4
+RES=$?
+if [ $RES -ne 0 ]; then
+    ERROR=1
+fi
+
+######
+# Was there an error?  Terminate accordingly.
+######
+
+if [ "$ERROR" = "0" ]; then
+    echo "------------------"
+    echo "Test OK!"
+    echo "------------------"
+    exit $EXIT_OK
+else
+    echo "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+    echo "ERRORS DURING TESTING OF hashtable!?"
+    echo "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+    exit $EXIT_ERROR
+fi

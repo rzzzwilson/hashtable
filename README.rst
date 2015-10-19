@@ -16,6 +16,8 @@ Usage
 
 Before using a hashtable you must create it:
 
+::
+
     HASHTABLE h = HashCreate(64, hash, compare);
 
 You supply the size of the hashtable vector (64 elements in this case)
@@ -26,26 +28,34 @@ pointers.
 
 The auxiliary functions have the following signatures:
 
+::
+
     int compare(void *old, void *new);
 
 where **old** and **new** are void pointers to two of your records.
 Your code must cast these two pointers to pointers to your records
 and somehow compare them.  The return value is one of:
 
-```
-     -1  new < old
-      0  new == old
-     +1  new > old
-```
++---------+------------+
+| Returns | When       |
++=========+============+
+|   -1    | new < old  |
++---------+------------+
+|    0    | new == old |
++---------+------------+
+|   +1    | new > old  |
++---------+------------+
 
 The hash function is:
 
     unsigned int hash(void *voidrecord)
 
 where **voidrecord** is a void pointer to one of your records.  Your
-code must generate a hasg value (unsigned int) and return it.
+code must generate a hash value (unsigned int) and return it.
 
 Once the hashtable has been created you can populate it so:
+
+::
 
     typedef struct
     {
@@ -56,6 +66,5 @@ Once the hashtable has been created you can populate it so:
     MYREC     myrec;
 
     void *rec = HashLookup(h, &myrec);
-
 
 Look in **test.c** for some sample code.

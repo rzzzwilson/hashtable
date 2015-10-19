@@ -6,6 +6,8 @@ The **hashtable.h** file describes the interface to the library.
 
 To build the library, do:
 
+::
+
     $ make clean
     $ make
 
@@ -47,6 +49,8 @@ and somehow compare them.  The return value is one of:
 +---------+------------+
 
 The hash function is:
+
+::
 
     unsigned int hash(void *voidrecord)
 

@@ -61,6 +61,8 @@ Once the hashtable has been created you can populate it so:
 
 ::
 
+    HASHTABLE h = HashCreate(64, hash, compare);
+
     typedef struct
     {
         char string[128];
@@ -69,7 +71,7 @@ Once the hashtable has been created you can populate it so:
 
     MYREC myrec;
 
-    void *rec = HashLookup(h, &myrec);
+    HashInsert(h, &myrec, sizeof(myrec));
 
 To find a record in a hashtable do something like this:
 

@@ -11,11 +11,11 @@ CCOPTS=-DDEBUG -g
 
 SRC=hashtable.c
 
-all:		test
-
-test:		test.c hashtable.o Makefile
-		$(CC) $(CCOPTS) -o test test.c hashtable.o
+test:		testsuite
 		./testsuite
+
+testsuite:      test.c hashtable.o Makefile
+		$(CC) $(CCOPTS) -o test test.c hashtable.o
 
 hashtable.o:	$(SRC) Makefile
 		$(CC) $(CCOPTS) -o hashtable.o -c $(SRC)

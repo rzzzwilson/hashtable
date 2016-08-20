@@ -13,12 +13,13 @@ endef
 
 CC=cc
 #CCOPTS=-I ../memcheck -DDEBUG -g
-CCOPTS=-DDEBUG -g
+#CCOPTS=-DDEBUG -g
+CCOPTS=
 
 SRC=hashtable.c
 
 test:		testsuite
-		./testsuite
+		bash testsuite
 
 testsuite:      test.c hashtable.o Makefile
 		$(call colorecho,"Compiling with" $(CC))

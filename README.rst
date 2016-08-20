@@ -36,7 +36,7 @@ The compare function has the following signature:
 
 where **old** and **new** are void pointers to two of your records.
 Your code must cast these two pointers to pointers to your records
-and somehow compare them.  The return value is one of:
+and somehow compare them.  The return value must be one of:
 
 +---------+------------+
 | Returns | When       |
@@ -48,6 +48,25 @@ and somehow compare them.  The return value is one of:
 |   +1    | new > old  |
 +---------+------------+
 
+For example, we could do this:
+
+::
+
+    typedef struct
+    {
+        char string[128];
+        int  count;
+    } MYREC;
+
+    int
+    my_compare(void *old, void *new)
+    {
+        char *str_old = (MYREC *) old->string;
+        char *str_new = (MYREC *) new->string;
+
+        return strcmp(str_new, str_old);
+    }
+
 The hash function signature is:
 
 ::
@@ -56,6 +75,22 @@ The hash function signature is:
 
 where **voidrecord** is a void pointer to one of your records.  Your
 code must generate a hash value (unsigned int) and return it.
+
+Here's one possible hash function:
+::
+
+    unsigned
+    hash(void *rec)
+    {
+        MYREC    *record = (MYREC *) rec;
+        unsigned result = strlen(record->string);
+        char     *chptr = record->string;
+    
+        while (*chptr)
+            result *= *(chptr++);
+    
+        return result;
+    }
 
 Once the hashtable has been created you can populate it so:
 

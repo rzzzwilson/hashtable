@@ -78,9 +78,10 @@ Description : Routine to compare two two data lines.
 int
 compare(void *old, void *new)
 {
-    int result = strcmp(new, old);
+    char *str_old = (char *) old;
+    char *str_new = (char *) new;
 
-    return result;
+    return strcmp(str_new, str_old);
 }
 
 

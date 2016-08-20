@@ -240,11 +240,13 @@ HashDestroy(HASHTABLE htable)
 
 
 /******************************************************************************
-       Name : 
-Description : 
- Parameters : 
+       Name : HashDump()
+Description : Funtion to dump a hashtable.
+ Parameters : htable - the hashtable to dump
+            : dump   - a function pointer (HDUMP) to dump each hash record
+            :          to *somewhere*!
     Returns : 
-   Comments : 
+   Comments : Possibly useful to the end user, but mainly a debug function.
  ******************************************************************************/
 void
 HashDump(HASHTABLE htable, HDUMP dump)

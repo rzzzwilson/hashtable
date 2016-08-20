@@ -71,9 +71,9 @@ The hash function signature is:
 
 ::
 
-    unsigned int hash(void *voidrecord)
+    unsigned int hash(void *rec)
 
-where **voidrecord** is a void pointer to one of your records.  Your
+where **rec** is a void pointer to one of your records.  Your
 code must generate a hash value (unsigned int) and return it.
 
 Here's one possible hash function:

@@ -30,4 +30,4 @@ hashtable.o:	$(SRC) Makefile
 		$(CC) $(CCOPTS) -o hashtable.o -c $(SRC)
 
 clean:
-		rm -f hashtable.o *.o
+		rm -f hashtable.o *.o test

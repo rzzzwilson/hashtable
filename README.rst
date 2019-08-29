@@ -1,5 +1,5 @@
-hashtable
-=========
+A hashtable for C
+=================
 
 This directory contains a library for the use of a hashtable.
 The **hashtable.h** file describes the interface to the library.
@@ -20,7 +20,7 @@ Before using a hashtable you must create it:
 
 ::
 
-    HASHTABLE h = HashCreate(64, hash, compare);
+    HASHTABLE h = hash_create(64, hash, compare);
 
 You supply the size of the hashtable vector (64 elements in this case)
 as well as the two user-supplied functions, **hash()** and
@@ -96,7 +96,7 @@ Once the hashtable has been created you can populate it so:
 
 ::
 
-    HASHTABLE h = HashCreate(64, hash, compare);
+    HASHTABLE h = hash_create(64, hash, compare);
 
     typedef struct
     {
@@ -106,18 +106,18 @@ Once the hashtable has been created you can populate it so:
 
     MYREC myrec;
 
-    HashInsert(h, &myrec, sizeof(myrec));
+    hash_insert(h, &myrec, sizeof(myrec));
 
 To find a record in a hashtable do something like this:
 
 ::
 
-    HASHTABLE h = HashCreate(64, hash, compare);
+    HASHTABLE h = hash_create(64, hash, compare);
 
     /* insert some records here */
 
     char *record = "abc";
-    void *result = HashLookup(h, (void *) record):
+    void *result = hash_lookup(h, (void *) record):
 
     if (result == NULL)
         /* not found */

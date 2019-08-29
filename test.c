@@ -13,7 +13,6 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <limits.h>
-
 #include "hashtable.h"
 
 
@@ -63,7 +62,6 @@ MYREC     myrec;
 static void  error(char *fmt, ...);
 
 
-
 /******************************************************************************
        Name : compare()
 Description : Routine to compare two two data lines.
@@ -84,7 +82,6 @@ compare(void *old, void *new)
     return strcmp(str_new, str_old);
 }
 
-
 /******************************************************************************
        Name : dump()
 Description : Routine to dump a record to the output file.
@@ -99,7 +96,6 @@ dump(void *voidrec)
 
     fprintf(OutData, "Record: '%s', count=%d\n", rec->string, rec->count);
 }
-
 
 /******************************************************************************
        Name : error()
@@ -121,7 +117,6 @@ error(char *fmt, ...)
     exit(EXIT_ERROR);
 }
 
-
 /******************************************************************************
        Name : hash()
 Description : Routine to generate the hash value for a record.
@@ -142,7 +137,6 @@ hash(void *voidrecord)
     return result;
 }
 
-
 /******************************************************************************
        Name : test()
 Description : Production routine for the 'test' system.
@@ -156,14 +150,14 @@ Description : Production routine for the 'test' system.
 static void
 test(FILE *in, char *inname, FILE *out, char *outname)
 {
-    char      buff[128];
+    char buff[128];
     HASHTABLE h;
 
 /******
  * Create the hashtable
  ******/
 
-    h = HashCreate(64, hash, compare);
+    h = hash_create(64, hash, compare);
 
 /******
  * Read data from input and process it.
@@ -180,11 +174,11 @@ test(FILE *in, char *inname, FILE *out, char *outname)
 
         myrec.count = 1;
 
-        rec = HashLookup(h, &myrec);
+        rec = hash_lookup(h, &myrec);
         if (rec == NULL)
         {
             fprintf(out, "Inserted new record '%s'\n", myrec.string);
-            HashInsert(h, &myrec, sizeof(myrec));
+            hash_insert(h, &myrec, sizeof(myrec));
         }
         else
         {
@@ -199,15 +193,14 @@ test(FILE *in, char *inname, FILE *out, char *outname)
  * Now dump data to output stream.
  ******/
 
-    HashDump(h, dump);
+    hash_dump(h, dump);
 
 /******
  * Delete the hashtable.
  ******/
 
-    HashDestroy(h);
+    hash_destroy(h);
 }
-
 
 /******************************************************************************
        Name : usage()
@@ -225,7 +218,6 @@ usage(void)
           "      <out> is the (optional) output filename.\n",
           ProgName);
 }
-
 
 /******************************************************************************
        Name : main()

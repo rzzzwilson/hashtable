@@ -8,35 +8,35 @@
  *  the user to provide only the hash algorithm and a record comparison       *
  *  function.  The functions provided are:                                    *
  *                                                                            *
- *      HASHTABLE HashCreate(int numentries, HHASH hash, HCMP compare);       *
+ *      HASHTABLE hash_create(int numentries, HHASH hash, HCMP compare);      *
  *                                                                            *
  *          Creates a hashtable with 'numentries' slots. 'hash' is a function *
  *          used to create a hash value from the user data record. 'compare'  *
  *          is a function used to compare two data records. The function      *
  *          returns a token to be used when manipulating the new hashtable.   *
  *                                                                            *
- *      void HashInsert(HASHTABLE htable, void *record, int recsize);         *
+ *      void hash_insert(HASHTABLE htable, void *record, int recsize);        *
  *                                                                            *
  *          Inserts a record into the hash table.  'htable' is the hashtable  *
- *          token returned from a HashCreate() call.  'record' is a pointer   *
+ *          token returned from a hash_create() call.  'record' is a pointer  *
  *          to the data record to be inserted. 'recsize' is record size.      *
  *                                                                            *
- *      void *HashLookup(HASHTABLE htable, void *record);                     *
+ *      void *hash_lookup(HASHTABLE htable, void *record);                    *
  *                                                                            *
  *          Performs a lookup on the hashtable for a record matching the      *
  *          supplied lookup record 'record'.  Returns a pointer to the found  *
  *          record or NULL if the record isn't found.                         *
  *                                                                            *
- *      void HashDestroy(HASHTABLE htable);                                   *
+ *      void hash_destroy(HASHTABLE htable);                                  *
  *                                                                            *
  *          Destroy a hashtable.                                              *
  *                                                                            *
- *      void HashDump(HASHTABLE htable, HDUMP dump);                          *
+ *      void hash_dump(HASHTABLE htable, HDUMP dump);                         *
  *                                                                            *
  *          Calls dump() for each record stored in hashtable.                 *
  *          (DEBUG purposes only, not defined if DEBUG not defined)           *
  *                                                                            *
- *  The records inserted into each hashtable must be the same.                *
+ *  The records inserted into each hashtable must be the same type.           *
  *                                                                            *
 \******************************************************************************/
 
@@ -45,7 +45,6 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdarg.h>
-
 #include "hashtable.h"
 
 
@@ -75,21 +74,6 @@ typedef struct bhdr
 } BHDR;
 
 
-/******
- * Local constants.
- ******/
-
-
-/******
- * Static globals.
- ******/
-
-
-/******
- * Forward prototype definitions.
- ******/
-
-
 /******************************************************************************
        Name : error()
 Description : printf()-like error routine.
@@ -112,7 +96,7 @@ error(char *fmt, ...)
 
 
 /******************************************************************************
-       Name : HashCreate()
+       Name : hash_create()
 Description : Routine to create a hashtable.
  Parameters : numentries - number of slots in the new hash table
             : hash       - address of user hash function
@@ -121,7 +105,7 @@ Description : Routine to create a hashtable.
    Comments : 
  ******************************************************************************/
 HASHTABLE
-HashCreate(int numentries, HHASH hash, HCMP compare)
+hash_create(int numentries, HHASH hash, HCMP compare)
 {
     HTAB *htab = malloc(sizeof(HTAB));
     int  i;
@@ -145,7 +129,7 @@ HashCreate(int numentries, HHASH hash, HCMP compare)
 
 
 /******************************************************************************
-       Name : HashInsert()
+       Name : hash_insert()
 Description : Function to insert new record into the hash table.
  Parameters : htable  - address (void *) of hashtable header
             : record  - address (void *) of record to insert
@@ -155,7 +139,7 @@ Description : Function to insert new record into the hash table.
             : New record placed in front of any existing equal hash record.
  ******************************************************************************/
 void
-HashInsert(HASHTABLE htable, void *record, int recsize)
+hash_insert(HASHTABLE htable, void *record, int recsize)
 {
     HTAB *h = (HTAB *) htable;
     int  hash = h->hash(record) % h->numentries;
@@ -174,7 +158,7 @@ HashInsert(HASHTABLE htable, void *record, int recsize)
 
 
 /******************************************************************************
-       Name : HashLookup()
+       Name : hash_lookup()
 Description : Look for a record in a hashtable.
  Parameters : htable - hashtable to look in
             : record - the record to look for
@@ -182,7 +166,7 @@ Description : Look for a record in a hashtable.
    Comments : 
  ******************************************************************************/
 void *
-HashLookup(HASHTABLE htable, void *record)
+hash_lookup(HASHTABLE htable, void *record)
 {
     void *result = NULL;
     HTAB *h = (HTAB *) htable;
@@ -207,14 +191,14 @@ HashLookup(HASHTABLE htable, void *record)
 
 
 /******************************************************************************
-       Name : HashDestroy()
+       Name : hash_destroy()
 Description : Destroy a hash table.
  Parameters : htable - hash table to destroy
     Returns : 
    Comments : 
  ******************************************************************************/
 void
-HashDestroy(HASHTABLE htable)
+hash_destroy(HASHTABLE htable)
 {
     HTAB *h = (HTAB *) htable;
     int  i;
@@ -240,7 +224,7 @@ HashDestroy(HASHTABLE htable)
 
 
 /******************************************************************************
-       Name : HashDump()
+       Name : hash_dump()
 Description : Funtion to dump a hashtable.
  Parameters : htable - the hashtable to dump
             : dump   - a function pointer (HDUMP) to dump each hash record
@@ -249,7 +233,7 @@ Description : Funtion to dump a hashtable.
    Comments : Possibly useful to the end user, but mainly a debug function.
  ******************************************************************************/
 void
-HashDump(HASHTABLE htable, HDUMP dump)
+hash_dump(HASHTABLE htable, HDUMP dump)
 {
     HTAB *htab = (HTAB *) htable;
     int  i;
